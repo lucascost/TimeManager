@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener{
         minuto.minValue=0 ; minuto.maxValue=60
         dialog.setCancelable(true)
         dialog.findViewById<Button>(R.id.button).setOnClickListener{
-            add_task(name.text.toString(),hora.value*3600+minuto.value*60)
+            add_task(name.text.toString(),(hora.value*3600+minuto.value*60)*1000)
             dialog.dismiss()
         }
         dialog.show()
@@ -72,8 +72,7 @@ class MainActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener{
     private fun add_task(nome:String,duracao:Int){
         val panel = findViewById<LinearLayout>(R.id.panel)
         val view = layoutInflater.inflate(R.layout.row,panel,false)
-        view.findViewById<TextView>(R.id.name).setText(nome)
-        view.findViewById<TextView>(R.id.timer).setText(formatFull(duracao*1000))
+        val task=Task(view,nome,duracao.toLong())
         panel.addView(view)
     }
 }
