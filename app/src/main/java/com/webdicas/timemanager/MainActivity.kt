@@ -13,26 +13,20 @@ import java.util.*
 
 class MainActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener{
     lateinit var b: ActivityMainBinding
-    private var display:TextView? = null
-    private var hora_inicio:TextView? = null
-    private var hora_fim:TextView? = null
+    private var totalTime=0
     private var control=0
     private var inicio=0
+    var hora_inicio=0
+    var hora_fim=0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-         b=  ActivityMainBinding.inflate(layoutInflater)
+         b= ActivityMainBinding.inflate(layoutInflater)
         setContentView(b.root)
 
-        display = findViewById(R.id.main_timer)
-        hora_inicio=findViewById(R.id.hora_inicio)
-        hora_fim=findViewById(R.id.hora_fim)
-
-
-
-        this.findViewById<ImageButton>(R.id.edit).setOnClickListener{
+        b.edit.setOnClickListener{
             if(control<2)
-                getFullTime()
+                getTotalTime()
         }
         b.floatingActionButton.setOnClickListener{
             show_dialog()
@@ -43,7 +37,6 @@ class MainActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener{
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.config_task)
         val name:TextView=dialog.findViewById(R.id.task_name)
-        var duracao=""
 
         val hora:NumberPicker=dialog.findViewById(R.id.hora)
         val minuto:NumberPicker=dialog.findViewById(R.id.minuto)
@@ -52,21 +45,12 @@ class MainActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener{
         minuto.minValue=0 ; minuto.maxValue=60
         dialog.setCancelable(true)
         dialog.findViewById<Button>(R.id.button).setOnClickListener{
-            add_task(name.text.toString(),4)
+            add_task(name.text.toString(),hora.value*3600+minuto.value*60)
             dialog.dismiss()
         }
-
         dialog.show()
-        /*
-        hora.minValue=0 ; hora.maxValue=24
-        minuto.minValue=0 ; minuto.maxValue=60
-         */
-
-
-
-
     }
-    private fun getFullTime(){
+    private fun getTotalTime(){
         val cal:Calendar = Calendar.getInstance()
         var h=cal.get(Calendar.HOUR)
         TimePickerDialog(this,this,h,0,true).show()
@@ -74,10 +58,13 @@ class MainActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener{
     }
     override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
         when(control) {
-            0 -> { hora_inicio?.text = format(hourOfDay, minute); inicio=hourOfDay}
+            0 -> { b.horaInicio.text = format(hourOfDay, minute); hora_inicio= convert(hourOfDay,minute)}
             1-> {
-                hora_fim?.text = format(hourOfDay, minute)
-                config_display(display,inicio,hourOfDay)
+                b.horaFim.text = format(hourOfDay, minute)
+                hora_fim= convert(hourOfDay,minute)
+                totalTime=hora_fim-hora_inicio
+                b.mainTimer.text= formatFull(totalTime)
+                println(totalTime)
             }
         }
         control++
@@ -86,7 +73,7 @@ class MainActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener{
         val panel = findViewById<LinearLayout>(R.id.panel)
         val view = layoutInflater.inflate(R.layout.row,panel,false)
         view.findViewById<TextView>(R.id.name).setText(nome)
-        view.findViewById<TextView>(R.id.timer).setText(format(10,0))
+        view.findViewById<TextView>(R.id.timer).setText(formatFull(duracao*1000))
         panel.addView(view)
     }
 }
