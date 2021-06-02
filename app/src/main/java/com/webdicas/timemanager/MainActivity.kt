@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener{
     lateinit var b: ActivityMainBinding
     private var totalTime=0
     private var control=0
-    private var inicio=0
+
     var hora_inicio=0
     var hora_fim=0
 
@@ -30,6 +30,11 @@ class MainActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener{
         }
         b.floatingActionButton.setOnClickListener{
             show_dialog()
+        }
+        b.btnInfo.setOnClickListener {
+            val ini = formatFull(hora_inicio)
+            val fim = formatFull(hora_fim)
+            Toast.makeText(this, "De ${ini.substring(0,5)} às ${fim.substring(0,5)}.", Toast.LENGTH_SHORT).show()
         }
     }
     private fun show_dialog(){
@@ -58,9 +63,10 @@ class MainActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener{
     }
     override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
         when(control) {
-            0 -> { b.horaInicio.text = format(hourOfDay, minute); hora_inicio= convert(hourOfDay,minute)}
+            0 -> { //b.horaInicio.text = format(hourOfDay, minute)
+                   hora_inicio= convert(hourOfDay,minute)}
             1-> {
-                b.horaFim.text = format(hourOfDay, minute)
+                //b.horaFim.text = format(hourOfDay, minute)
                 hora_fim= convert(hourOfDay,minute)
                 totalTime=hora_fim-hora_inicio
                 b.mainTimer.text= formatFull(totalTime)
